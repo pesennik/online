@@ -4,6 +4,8 @@ import * as ReactRedux from "react-redux"
 import {AppState} from "../AppReducer"
 import {Dispatch} from "redux"
 
+export const pesennikPageMount = "/"
+
 type OwnProps = {}
 
 type StateProps = {}
@@ -15,9 +17,12 @@ type AllProps = OwnProps & StateProps & DispatchProps;
 class PesennikPage extends React.Component<AllProps, {}> {
 
     render(): React.ReactNode {
-        return <div>Pesennik Page</div>
+        return (
+            <div>
+                Pesennik Page
+            </div>
+        )
     }
-
 }
 
 function mapDispatchToProps(dispatch: Dispatch): DispatchProps {

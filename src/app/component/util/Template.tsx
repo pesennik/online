@@ -1,8 +1,7 @@
 import * as React from "react"
 import * as ReactRedux from "react-redux"
-
-import {AppState} from "../AppReducer"
 import {Dispatch} from "redux"
+import {AppState} from "../../AppReducer"
 
 type OwnProps = {}
 
@@ -12,11 +11,7 @@ type DispatchProps = {}
 
 type AllProps = OwnProps & StateProps & DispatchProps;
 
-class TunerPage extends React.Component<AllProps, {}> {
-
-    render(): React.ReactNode {
-        return <div>Tuner Page</div>
-    }
+class Template extends React.Component<AllProps, {}> {
 
 }
 
@@ -28,7 +23,7 @@ function mapStateToProps(state: AppState): StateProps {
     return {}
 }
 
-const tunerPage = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(TunerPage) as React.ComponentClass<OwnProps>
+const component = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(Template) as React.ComponentClass<OwnProps>
 export {
-    tunerPage as TunerPage
+    component as Template
 }

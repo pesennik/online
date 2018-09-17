@@ -1,3 +1,3 @@
-import {app} from "./app/App"
+import {appInit} from "./app/AppInit"
 
-window["$app"] = app
+window["$app"] = appInit

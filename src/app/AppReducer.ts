@@ -1,15 +1,19 @@
-import {AnyAction, combineReducers, Store} from "redux"
+import {combineReducers, Store} from "redux"
 import {uiStateReducer} from "./UiStateReducer"
-import {Pesennik} from "./PesennikModel"
-import {UiState} from "./UiStateModel"
-import {pesennikReducer} from "./PesennikStateReducer"
+import {Pesennik} from "./PesennikState"
+import {UiState} from "./UiState"
+import {pesennikStateReducer} from "./PesennikStateReducer"
+import {PAction} from "./Actions"
 
-export interface AppState extends Store<any, AnyAction> {
-    uiState: UiState;
+export interface AppState {
+    ui: UiState;
     pesennik: Pesennik
 }
 
+export interface AppStore extends Store<AppState, PAction<any>> {
+}
+
 export const rootReducer = combineReducers({
-    uiState: uiStateReducer,
-    pesennik: pesennikReducer
+    ui: uiStateReducer,
+    pesennik: pesennikStateReducer
 })

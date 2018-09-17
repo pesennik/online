@@ -1,7 +1,7 @@
 import * as React from "react"
 import * as ReactRedux from "react-redux"
-import {AppState} from "../PesennikModel"
 import {Dispatch} from "redux"
+import {AppState} from "../AppReducer"
 
 type OwnProps = {}
 

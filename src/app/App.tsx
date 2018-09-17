@@ -1,40 +1,53 @@
 import * as React from "react"
-import {render} from "react-dom"
-import {createStore} from "redux"
-import {Provider} from "react-redux"
-import {AppState, rootReducer} from "./AppReducer"
-import {PesennikPage} from "./page/PesennikPage"
-import {TunerPage} from "./page/TunerPage"
-import {BrowserRouter, Route, Switch} from "react-router-dom"
-import {Page404} from "./page/Page404"
+import * as ReactRedux from "react-redux"
 
-export interface InitContext {
-    appElementId: string,
+import {AppState} from "./AppReducer"
+import {Dispatch} from "redux"
+import {UiState} from "./UiState"
+import {PesennikPage, pesennikPageMount} from "./component/PesennikPage"
+import {Page404} from "./component/Page404"
+import {TunerPage, tunerPageMount} from "./component/tuner/TunerPage"
+import {PageWithSidebar} from "./component/PageWithSidebar"
+
+type OwnProps = {}
+
+type StateProps = { ui: UiState }
+
+type DispatchProps = {}
+
+type AllProps = OwnProps & StateProps & DispatchProps;
+
+class App extends React.Component<AllProps, {}> {
+
+    render(): React.ReactNode {
+        const page = getPageFromMount(this.props.ui.mount)
+        if (page === undefined) {
+            return <Page404/>
+        }
+        return <PageWithSidebar children={page}/>
+    }
 }
 
-function getStoreEnhancer() {
-    return window["__REDUX_DEVTOOLS_EXTENSION__"] && window["__REDUX_DEVTOOLS_EXTENSION__"]()
+function getPageFromMount(mount: string): React.ReactNode | undefined {
+    switch (mount) {
+        case pesennikPageMount:
+            return <PesennikPage/>
+        case tunerPageMount:
+            return <TunerPage/>
+    }
 }
 
-const store: AppState = createStore(rootReducer as any, getStoreEnhancer())
-
-function init(ctx: InitContext) {
-    render(
-        <Provider store={store}>
-            <BrowserRouter>
-                <div>
-                    <Switch>
-                        <Route exact path="/" component={PesennikPage}/>
-                        <Route path="/tuner" component={TunerPage}/>
-                        <Route component={Page404}/>
-                    </Switch>
-                </div>
-            </BrowserRouter>
-        </Provider>,
-        document.getElementById(ctx.appElementId)
-    )
+function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
+    return {}
 }
 
-export const app = {
-    init
+function mapStateToProps(state: AppState): StateProps {
+    return {
+        ui: state.ui
+    }
+}
+
+const app = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(App) as React.ComponentClass<OwnProps>
+export {
+    app as App
 }
