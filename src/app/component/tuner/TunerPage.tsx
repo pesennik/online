@@ -4,6 +4,7 @@ import {Dispatch} from "redux"
 import {AppState} from "../../AppReducer"
 import {GuitarString, TunerSoundType, TunerState} from "../../UiState"
 import {changeTunerRepeatMode, changeTunerSoundType, changeTunerString} from "../../UiStateReducer"
+import {GuitarStringButton} from "./GuitarStringButton"
 
 export const tunerPageMount = "/tuner"
 
@@ -24,6 +25,8 @@ type AllProps = OwnProps & StateProps & DispatchProps;
 class TunerPage extends React.Component<AllProps, {}> {
 
     render(): React.ReactNode {
+        const guitarStringButtons = Object.keys(GuitarString).map(gs =>
+            <GuitarStringButton key={gs} guitarString={gs as GuitarString}/>)
         return (
             <div>
                 <h2>Тюнер для гитары</h2>
@@ -52,12 +55,7 @@ class TunerPage extends React.Component<AllProps, {}> {
                             </tbody>
                         </table>
                         <div className="mt20">
-                            <a className="tuner-string-button">1</a>
-                            <a className="tuner-string-button">2</a>
-                            <a className="tuner-string-button">3</a>
-                            <a className="tuner-string-button">4</a>
-                            <a className="tuner-string-button">5</a>
-                            <a className="tuner-string-button">6</a>
+                            {guitarStringButtons}
                         </div>
                     </div>
                 </div>
