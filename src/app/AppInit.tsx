@@ -5,6 +5,7 @@ import {Provider} from "react-redux"
 import thunk from "redux-thunk"
 import {AppStore, rootReducer} from "./AppReducer"
 import {App} from "./App"
+import {uiMountMiddleware} from "./UiStateReducer"
 
 export interface InitContext {
     appElementId: string,
@@ -16,7 +17,8 @@ const store: AppStore = createStore(
     rootReducer,
     composeEnhancers(
         applyMiddleware(
-            thunk
+            thunk,
+            uiMountMiddleware
         )
     )
 )

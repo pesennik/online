@@ -51,9 +51,9 @@ export function uiStateReducer(state: UiState = initialUiState, action: PAction<
 function reduce(state: UiState, action: PAction<any>): UiState {
     switch (action.type) {
         case UiAction.OpenPesennikPage:
-            return updateMount(state, pesennikPageMount)
+            return {...state, mount: pesennikPageMount}
         case UiAction.OpenTunerPage:
-            return updateMount(state, tunerPageMount)
+            return {...state, mount: tunerPageMount}
         case UiAction.ChangeTunerString:
             return {...state, tuner: {...state.tuner, currentString: action.payload}}
         case UiAction.ChangeTunerSoundType:
@@ -64,9 +64,15 @@ function reduce(state: UiState, action: PAction<any>): UiState {
     return state
 }
 
-function updateMount(state: UiState, mount: string): UiState {
-    const data = undefined
-    const title = undefined
-    window.history.pushState(data, title, mount)
-    return {...state, mount}
+export const uiMountMiddleware = store => next => action => {
+    const mountBefore = store.getState().ui.mount
+    const result = next(action)
+    const mountAfter = store.getState().ui.mount
+    if (mountBefore !== mountAfter) {
+        console.log("mount before: " + mountBefore + ", mount after: " + mountAfter)
+        const data = undefined
+        const title = undefined
+        window.history.pushState(data, title, mountAfter)
+    }
+    return result
 }
