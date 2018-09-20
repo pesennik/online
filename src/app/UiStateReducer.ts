@@ -64,7 +64,9 @@ function reduce(state: UiState, action: PAction<any>): UiState {
         case UiAction.OpenTunerPage:
             return {...state, mount: tunerPageMount}
         case UiAction.ChangeTunerString:
-            return {...state, tuner: {...state.tuner, currentString: action.payload}}
+            const currentString = action.payload as GuitarString
+            setTimeout(() => new Audio(getSoundFileUrl(currentString, state.tuner.soundType)).play(), 0)
+            return {...state, tuner: {...state.tuner, currentString}}
         case UiAction.ChangeTunerSoundType:
             return {...state, tuner: {...state.tuner, soundType: action.payload}}
         case UiAction.ChangeTunerRepeatMode:
@@ -94,4 +96,27 @@ export function uiMountMiddleware(store: AppStore) {
             return result
         }
     }
+}
+
+function getGuitarStringNumber(guitarString: GuitarString): number {
+    switch (guitarString) {
+        case GuitarString.e:
+            return 1
+        case GuitarString.H:
+            return 2
+        case GuitarString.G:
+            return 3
+        case GuitarString.D:
+            return 4
+        case GuitarString.A:
+            return 5
+        case GuitarString.E:
+            return 6
+    }
+}
+
+function getSoundFileUrl(guitarString: GuitarString, soundType: TunerSoundType): string {
+    const stringIdx = getGuitarStringNumber(guitarString)
+    const soundPrefix = soundType.substring(0, 1).toLowerCase()
+    return "/media/tuner/string/" + soundPrefix + stringIdx + ".mp3"
 }

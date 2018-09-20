@@ -19,7 +19,7 @@ type DispatchProps = {
 
 type AllProps = OwnProps & StateProps & DispatchProps;
 
-class GuitarStringButton extends React.Component<AllProps, {}> {
+class TunerStringButton extends React.Component<AllProps, {}> {
 
     render(): React.ReactNode {
         const {guitarString, selected} = this.props
@@ -48,7 +48,7 @@ function mapStateToProps(state: AppState, ownProps: OwnProps): StateProps {
     }
 }
 
-const guitarStringButton = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(GuitarStringButton) as React.ComponentClass<OwnProps>
+const tunerStringButton = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(TunerStringButton) as React.ComponentClass<OwnProps>
 export {
-    guitarStringButton as GuitarStringButton
+    tunerStringButton as TunerStringButton
 }

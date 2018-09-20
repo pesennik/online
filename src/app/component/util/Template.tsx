@@ -2,7 +2,6 @@ import * as React from "react"
 import * as ReactRedux from "react-redux"
 import {Dispatch} from "redux"
 import {AppState} from "../../AppReducer"
-import {GuitarString} from "../../UiState"
 
 type OwnProps = {}
 
