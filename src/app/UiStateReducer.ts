@@ -11,6 +11,8 @@ enum UiAction {
     ChangeTunerString = "ChangeTunerString",
     ChangeTunerSoundType = "ChangeTunerSoundType",
     ChangeTunerRepeatMode = "ChangeTunerRepeatMode",
+    ToggleTunerPlayState = "ToggleTunerPlayState",
+    RestartTunerPlayState = "RestartTunerPlayState",
     SyncWithMount = "SyncWithMount"
 }
 
@@ -19,6 +21,8 @@ export const openTunerPageAction = () => newAction(UiAction.OpenTunerPage)
 export const changeTunerString = (guitarString: GuitarString) => newAction(UiAction.ChangeTunerString, guitarString)
 export const changeTunerSoundType = (soundType: TunerSoundType) => newAction(UiAction.ChangeTunerSoundType, soundType)
 export const changeTunerRepeatMode = (flag: boolean) => newAction(UiAction.ChangeTunerRepeatMode, flag)
+export const toggleTunerPlayState = () => newAction(UiAction.ToggleTunerPlayState)
+export const restartTunerPlayState = () => newAction(UiAction.RestartTunerPlayState)
 
 const UI_STATE_LOCAL_STORAGE_KEY = "pesennik-ui-state"
 
@@ -58,19 +62,22 @@ export function uiStateReducer(state: UiState = initialUiState, action: PAction<
 }
 
 function reduce(state: UiState, action: PAction<any>): UiState {
+    const tuner = state.tuner;
     switch (action.type) {
         case UiAction.OpenPesennikPage:
             return {...state, mount: pesennikPageMount}
         case UiAction.OpenTunerPage:
             return {...state, mount: tunerPageMount}
         case UiAction.ChangeTunerString:
-            const currentString = action.payload as GuitarString
-            setTimeout(() => new Audio(getSoundFileUrl(currentString, state.tuner.soundType)).play(), 0)
-            return {...state, tuner: {...state.tuner, currentString}}
+            return {...state, tuner: {...tuner, currentString: action.payload as GuitarString, playRequest: tuner.playRequest + 1}}
         case UiAction.ChangeTunerSoundType:
-            return {...state, tuner: {...state.tuner, soundType: action.payload}}
+            return {...state, tuner: {...tuner, soundType: action.payload as TunerSoundType}}
         case UiAction.ChangeTunerRepeatMode:
-            return {...state, tuner: {...state.tuner, repeat: action.payload}}
+            return {...state, tuner: {...tuner, repeat: action.payload as boolean}}
+        case UiAction.ToggleTunerPlayState:
+            return {...state, tuner: {...tuner, playRequest: (tuner.playRequest > 0 ? 0 : 1)}}
+        case UiAction.RestartTunerPlayState:
+            return {...state, tuner: {...tuner, playRequest: tuner.playRequest + 1}}
         case UiAction.SyncWithMount:
             return {...state, mount: getCurrentMount()}
     }
@@ -96,27 +103,4 @@ export function uiMountMiddleware(store: AppStore) {
             return result
         }
     }
-}
-
-function getGuitarStringNumber(guitarString: GuitarString): number {
-    switch (guitarString) {
-        case GuitarString.e:
-            return 1
-        case GuitarString.H:
-            return 2
-        case GuitarString.G:
-            return 3
-        case GuitarString.D:
-            return 4
-        case GuitarString.A:
-            return 5
-        case GuitarString.E:
-            return 6
-    }
-}
-
-function getSoundFileUrl(guitarString: GuitarString, soundType: TunerSoundType): string {
-    const stringIdx = getGuitarStringNumber(guitarString)
-    const soundPrefix = soundType.substring(0, 1).toLowerCase()
-    return "/media/tuner/string/" + soundPrefix + stringIdx + ".mp3"
 }

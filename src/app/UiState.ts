@@ -15,6 +15,8 @@ export interface TunerState {
     currentString: GuitarString,
     soundType: TunerSoundType
     repeat: boolean;
+    /** When 0 -> sound must be stopped. If increases -> sound must restart. */
+    playRequest: number;
 }
 
 

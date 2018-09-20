@@ -3,8 +3,8 @@ import * as ReactRedux from "react-redux"
 import {Dispatch} from "redux"
 import {AppState} from "../../AppReducer"
 import {GuitarString, TunerSoundType, TunerState} from "../../UiState"
-import {changeTunerRepeatMode, changeTunerSoundType, changeTunerString} from "../../UiStateReducer"
-import {TunerStringButton} from "./TunerStringButton"
+import {changeTunerRepeatMode, changeTunerSoundType, changeTunerString, toggleTunerPlayState} from "../../UiStateReducer"
+import {getGuitarStringByNumber, getNextGuitarString, getPrevGuitarString, TunerStringButton} from "./TunerStringButton"
 
 export const tunerPageMount = "/tuner"
 
@@ -18,11 +18,17 @@ type DispatchProps = {
     changeString: (string: GuitarString) => void,
     changeSoundType: (type: TunerSoundType) => void
     changeRepeatMode: (flag: boolean) => void
+    toggleTunerPlayState: () => void
 }
 
 type AllProps = OwnProps & StateProps & DispatchProps;
 
 class TunerPage extends React.Component<AllProps, {}> {
+
+    constructor(props: AllProps) {
+        super(props);
+        this.onKeyDown = this.onKeyDown.bind(this);
+    }
 
     render(): React.ReactNode {
         const guitarStringButtons = Object.keys(GuitarString).map(gs =>
@@ -92,13 +98,44 @@ class TunerPage extends React.Component<AllProps, {}> {
             </div>
         )
     }
+
+    componentDidMount(): void {
+        document.addEventListener("keydown", this.onKeyDown);
+    }
+
+    componentWillUnmount(): void {
+        document.removeEventListener("keydown", this.onKeyDown)
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        if ("123456".includes(event.key)) {
+            const gs = getGuitarStringByNumber(event.key)
+            if (gs) {
+                this.props.changeString(gs)
+            }
+        } else if (event.key === "ArrowRight" || event.key.toUpperCase() === "X") {
+            const nextString = getNextGuitarString(this.props.ui.currentString) || GuitarString.e;
+            this.props.changeString(nextString)
+        } else if (event.key === "ArrowLeft" || event.key.toUpperCase() === "Z") {
+            const prevString = getPrevGuitarString(this.props.ui.currentString) || GuitarString.E;
+            this.props.changeString(prevString)
+        } else if (event.key === " " || event.key.toUpperCase() === "C") {
+            this.props.toggleTunerPlayState()
+        } else if (event.key === "0" || event.key === "Insert" /*numpad 0*/ || event.key.toUpperCase() === "V") {
+            this.props.changeRepeatMode(!this.props.ui.repeat);
+        } else if (event.key == "ArrowUp" || event.key == "ArrowDown" || event.key.toUpperCase() === "B") {
+            const newSoundType = this.props.ui.soundType == TunerSoundType.Classic ? TunerSoundType.Electro : TunerSoundType.Classic
+            this.props.changeSoundType(newSoundType)
+        }
+    }
 }
 
 function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
     return {
         changeString: guitarString => dispatch(changeTunerString(guitarString)),
         changeSoundType: soundType => dispatch(changeTunerSoundType(soundType)),
-        changeRepeatMode: flag => dispatch(changeTunerRepeatMode(flag))
+        changeRepeatMode: flag => dispatch(changeTunerRepeatMode(flag)),
+        toggleTunerPlayState: () => dispatch(toggleTunerPlayState())
     }
 }
 
